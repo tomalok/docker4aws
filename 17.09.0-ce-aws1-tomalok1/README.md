@@ -10,7 +10,7 @@ This patch version includes the following...
 
 * ECR Auto-Authentication Patch - Jake Buchholz \<tomalok at gmail dot com\>
 
-  * Reference issue: docker/for-aws/issues#5
+  * Reference issue: docker/for-aws#5
   * Adds a read-only "ecr-policy" and attaches it to the Proxy (manager) and Worker roles.
   * Installs a script that basically does `$(aws ecr get-login --no-include-email)` for the root and docker users.
   * Sets up a cron job (on the moby instance) to run the script once every 8 hours.  Credentials are available in the `shell-aws` container because it mounts moby's `/home/docker`.
