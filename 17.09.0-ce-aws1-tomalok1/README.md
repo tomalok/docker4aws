@@ -1,12 +1,12 @@
 # Docker for AWS CloudFormation Template Tweaks
 
-Patched [Docker for AWS](https://docs.docker.com/docker-for-aws/) CloudFormation templates containing tweaks that I happen to find useful.
+## 17.09.0-ce-aws1-tomalok-1
 
-Subdirectory names indicate the original Docker for AWS version and the corresponding patch version.
+Patched [Docker for AWS](https://docs.docker.com/docker-for-aws/) CloudFormation templates containing tweaks that I happen to find useful.
 
 ----
 
-The current patch version includes the following...
+This patch version includes the following...
 
 * ECR Auto-Authentication Patch - Jake Buchholz \<tomalok at gmail dot com\>
 
