@@ -1,0 +1,49 @@
+<html>
+<head>
+ <title>ECR Auto-Authentication Patch</title>
+</head>
+<body>
+
+<hr>
+<center>
+<h1>Docker for AWS - ECR Auto-Authentication Patch</h1>
+<h3>Jake Buchholz &lt;tomalok at gmail dot com&gt;</h3>
+</center>
+<hr>
+
+<p>This patch adds caching of AWS ECR credentials to Docker for AWS clusters.</p>
+
+<p>Specifically, the patch...
+<ul>
+<li>Adds a read-only "ecr-policy" and attaches it to the Proxy (manager) and Worker roles.</li>
+<li>Installs a script that basically does <tt>$(aws ecr get-login --no-include-email)</tt> for the root and docker users.</li>
+<li>Sets up a cron job (on the moby instance) to run the script once every 8 hours.  Credentials are available in the <tt>shell-aws</tt> container because it mounts moby's <tt>/home/docker</tt>.</li>
+<li>Runs the script once.</li>
+</ul>
+</p>
+
+<p>Patch diff:
+<li><a href="/17.09.0-ce-aws1-tomalok1.diff">17.09.0-ce-aws1-tomalok1.diff</a></li>
+</p>
+
+<p>Patched CloudFormation template:
+<li><a href="/17.09.0-ce-aws1-tomalok1.tmpl">17.09.0-ce-aws1-tomalok1.tmpl</a></li>
+</p>
+
+<p>Install script (downloaded by and runs from CloudFormation template):
+<li><a href="/install-refresh-ecr-auth.sh">install-refresh-ecr-auth.sh</a></li>
+</p>
+
+<p>Reference issue:
+<li><a href="https://github.com/docker/for-aws/issues/5">https://github.com/docker/for-aws/issues/5</a></li>
+</p>
+
+<hr>
+<center>
+<h3>DISCLAIMER</h3>
+<h4>This patch is hereby released into the public domain in the hope that it will be useful, but without any warranty of any kind, expressed or implied.<br>
+In no event will the author of this patch be held liable for any damages or consequences of its use or misuse.<h4>
+</center>
+<hr>
+</body>
+</html>

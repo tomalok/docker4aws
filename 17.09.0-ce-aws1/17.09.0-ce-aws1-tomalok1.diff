@@ -1,0 +1,74 @@
+--- 17.09.0-ce-aws1.tmpl	2017-11-06 17:34:54.000000000 -0800
++++ 17.09.0-ce-aws1-tomalok1.tmpl	2017-11-20 18:13:46.000000000 -0800
+@@ -929,6 +929,43 @@
+             },
+             "Type": "AWS::IAM::Policy"
+         },
++        "ECRPolicy": {
++            "DependsOn": [
++                "ProxyRole",
++                "WorkerRole"
++            ],
++            "Properties": {
++                "PolicyDocument": {
++                    "Statement": [
++                        {
++                            "Action": [
++                                "ecr:GetAuthorizationToken",
++                                "ecr:BatchCheckLayerAvailability",
++                                "ecr:GetDownloadUrlForLayer",
++                                "ecr:GetRepositoryPolicy",
++                                "ecr:DescribeRepositories",
++                                "ecr:ListImages",
++                                "ecr:DescribeImages",
++                                "ecr:BatchGetImage"
++                            ],
++                            "Effect": "Allow",
++                            "Resource": "*"
++                        }
++                    ],
++                    "Version": "2012-10-17"
++                },
++                "PolicyName": "ecr-policy",
++                "Roles": [
++                    {
++                        "Ref": "ProxyRole"
++                    },
++                    {
++                        "Ref": "WorkerRole"
++                    }
++                ]
++            },
++            "Type": "AWS::IAM::Policy"
++        },
+         "DockerLogGroup": {
+             "Condition": "CreateLogResources",
+             "Properties": {
+@@ -1635,7 +1672,10 @@
+                                 "# cloudstor\n",
+                                 "docker plugin install --alias cloudstor:aws --grant-all-permissions docker4x/cloudstor:$DOCKER_FOR_IAAS_VERSION CLOUD_PLATFORM=AWS EFS_ID_REGULAR=$EFS_ID_REGULAR EFS_ID_MAXIO=$EFS_ID_MAXIO AWS_REGION=$AWS_REGION AWS_STACK_ID=$STACK_ID EFS_SUPPORTED=$ENABLE_EFS DEBUG=1\n",
+                                 "docker run --label com.docker.editions.system --log-driver=json-file  --log-opt max-size=50m --name=meta-aws --restart=always -d -p $LOCAL_IP:9024:8080 -e AWS_REGION=$AWS_REGION -e MANAGER_SECURITY_GROUP_ID=$MANAGER_SECURITY_GROUP_ID -e WORKER_SECURITY_GROUP_ID=$WORKER_SECURITY_GROUP_ID -v /var/run/docker.sock:/var/run/docker.sock docker4x/meta-aws:$DOCKER_FOR_IAAS_VERSION metaserver -iaas_provider=aws\n",
+-                                "docker run --label com.docker.editions.system --log-driver=json-file  --log-opt max-size=50m --name=l4controller-aws --restart=always -d -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/docker/editions:/var/lib/docker/editions docker4x/l4controller-aws:$DOCKER_FOR_IAAS_VERSION run --log=4 --all=true\n"
++                                "docker run --label com.docker.editions.system --log-driver=json-file  --log-opt max-size=50m --name=l4controller-aws --restart=always -d -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/docker/editions:/var/lib/docker/editions docker4x/l4controller-aws:$DOCKER_FOR_IAAS_VERSION run --log=4 --all=true\n",
++                                "\n",
++                                "# Install ECR Credential Refresher\n",
++                                "wget -qO- http://s3-us-west-2.amazonaws.com/tomalok-d4aws/install-refresh-ecr-auth.sh | sh -ex\n"
+                             ]
+                         ]
+                     }
+@@ -2213,6 +2253,8 @@
+                                 "\n",
+                                 "# cloudstor\n",
+                                 "docker plugin install --alias cloudstor:aws --grant-all-permissions docker4x/cloudstor:$DOCKER_FOR_IAAS_VERSION CLOUD_PLATFORM=AWS EFS_ID_REGULAR=$EFS_ID_REGULAR EFS_ID_MAXIO=$EFS_ID_MAXIO AWS_REGION=$AWS_REGION AWS_STACK_ID=$STACK_ID EFS_SUPPORTED=$ENABLE_EFS DEBUG=1\n",
++                                "# Install ECR Credential Refresher\n",
++                                "wget -qO- http://s3-us-west-2.amazonaws.com/tomalok-d4aws/install-refresh-ecr-auth.sh | sh -ex\n",
+                                 "# Worker user data\n"
+                             ]
+                         ]
+@@ -2962,4 +3004,4 @@
+             "Type": "AWS::IAM::Role"
+         }
+     }
+-}
+\ No newline at end of file
++}
