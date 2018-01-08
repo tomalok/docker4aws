@@ -1,6 +1,8 @@
 # Docker for AWS CloudFormation Template Tweaks
 
-## 17.09.0-ce-aws1-tomalok1
+## 17.09.0-ce-aws1-tomalok2
+
+***Work in Progress***
 
 Patched [Docker for AWS](https://docs.docker.com/docker-for-aws/) CloudFormation templates containing tweaks that I happen to find useful.
 
