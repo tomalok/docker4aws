@@ -39,3 +39,5 @@ Non-exhaustive wishlist of tweaks to add in future versions...
   * More flexibility
     * Internal / External / Internal and External
     * Classing / Application LB / Network LB
+
+* Encrypted EBS volumes?

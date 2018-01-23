@@ -1,10 +1,16 @@
 # Docker for AWS CloudFormation Template Tweaks
 
-## 17.09.0-ce-aws1-tomalok2
+## 17.12.0-ce-aws1-tomalok2
+
+Patched [Docker for AWS](https://docs.docker.com/docker-for-aws/) CloudFormation templates containing tweaks that I happen to find useful.
 
 ***Work in Progress***
 
-Patched [Docker for AWS](https://docs.docker.com/docker-for-aws/) CloudFormation templates containing tweaks that I happen to find useful.
+- [x] base off of latest Docker for AWS CloudFormation template
+- [ ] include "tomalok2" in versioning
+- [ ] incorporate ECR AutoAuth scripts/setup directly in template
+- [ ] make ECR Auto-Authentication (and other patches) optional
+- [ ] incorporate Auto Route53 record updates (https://github.com/30mhz/autoscaling-route53-lambda)
 
 ----
 
