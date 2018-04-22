@@ -26,13 +26,13 @@ lc_names = t['Resources'].keys.select{|k| /^(.+)LaunchConfig(.+)$/.match?(k) }.e
 
 
 # get ECR policy
-ecr_policy = JSON.parse(File.read('ecr-policy.json'))
+ecr_policy = JSON.parse(File.read('src/ecr-policy.json'))
 
 # add ECR policy
 t['Resources'].merge!(ecr_policy)
 
 # get install-refresh-ecr-auth code
-install_refresh_ecr_auth = File.readlines('install-refresh-ecr-auth.sh')
+install_refresh_ecr_auth = File.readlines('src/install-refresh-ecr-auth.sh')
 
 # add install-refresh-ecr-auth code to UserDatas...
 lc_names.keys.each do |launch_config|
