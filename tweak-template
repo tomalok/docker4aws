@@ -1,0 +1,53 @@
+#!/usr/bin/env ruby
+
+require 'json'
+require 'open-uri'
+require 'pp'
+require 'yaml'
+
+VERSION = 'tomalok1'.freeze
+
+unless ARGV.count == 1
+  STDERR.puts "Usage: #{File.basename($0)} <template-uri>"
+  exit 1
+end
+
+
+### read in the source template
+t = JSON.parse(open(ARGV[0]).read)
+
+
+### update description
+t['Description'].gsub!(/(-aws\d+)/, "\\1-#{VERSION}")
+
+
+# get a hash of all the manager/worker launch config keys, and what we'll change them to
+lc_names = t['Resources'].keys.select{|k| /^(.+)LaunchConfig(.+)$/.match?(k) }.each_with_object({}) {|v,h| h[v] = v + VERSION }
+
+
+# get ECR policy
+ecr_policy = JSON.parse(File.read('ecr-policy.json'))
+
+# add ECR policy
+t['Resources'].merge!(ecr_policy)
+
+# get install-refresh-ecr-auth code
+install_refresh_ecr_auth = File.readlines('install-refresh-ecr-auth.sh')
+
+# add install-refresh-ecr-auth code to UserDatas...
+lc_names.keys.each do |launch_config|
+  t['Resources'][launch_config]['Properties']['UserData']['Fn::Base64']['Fn::Join'].last.concat(
+    install_refresh_ecr_auth
+  )
+end
+
+# change launch config names, and references to them
+lc_names.each do |old,new|
+  asg_name = old.sub(/LaunchConfig.*/, 'Asg')
+  t['Resources'][new] = t['Resources'].delete(old)
+  t['Resources'][asg_name]['Properties']['LaunchConfigurationName']['Ref'] = new
+end
+
+
+### output the new template
+puts JSON.pretty_generate(t)

@@ -14,9 +14,9 @@ The current patch version includes the following...
 
   * Reference issue: https://github.com/docker/for-aws/issues/5
   * Adds a read-only "ecr-policy" and attaches it to the Proxy (manager) and Worker roles.
-  * Installs a script that basically does `$(aws ecr get-login --no-include-email)` for the root and docker users.
+  * Installs a script that basically does `$(aws ecr get-login --no-include-email)` for the root and docker users, and then does a `docker service update --with-registry-auth` for each service in the swarm.
   * Sets up a cron job (on the moby instance) to run the script once every 8 hours.  Credentials are available in the `shell-aws` container because it mounts moby's `/home/docker`.
-  * Runs the script once.
+  * Runs the script once when the node's instance is instantiated.
   * DISCLAIMER - This patch is hereby released into the public domain in the hope that it will be useful, but without any warranty of any kind, expressed or implied.  In no event will the author of this patch be held liable for any damages or consequences of its use or misuse.
 
 ----
@@ -24,8 +24,6 @@ The current patch version includes the following...
 ## TODO
 
 Non-exhaustive wishlist of tweaks to add in future versions...
-
-* Embed scripts/files into the CloudFormation template, no longer need to pull the install script from my S3 bucket.
 
 * Make the ECR Auto-Auth patch (and other patches) optional when deploying/updating the CloudFormation template.
 
