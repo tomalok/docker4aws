@@ -35,7 +35,7 @@ Non-exhaustive wishlist of tweaks to add in future versions...
   * Disable load balancer(s) entirely
     * DNS straight to the nodes, and make use of the Docker Swarm mesh instead
   * More flexibility
-    * Internal / External / Internal and External
-    * Classing / Application LB / Network LB
+    * Classic LB / Application LB / Network LB
+    * Internal / External / Internal & External
 
 * Encrypted EBS volumes?
