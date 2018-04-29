@@ -9,7 +9,7 @@
 * added versioning to LaunchConfigurations
 ### Changed
 * `tweak-template` script downloads and tweaks templates
-  * generalized programmatic solutino, no more per-base-template diffs
+  * generalized programmatic solution, no more per-base-template diffs
   * maintain components separately in a src/ subdirectory
 * improved `refresh-ecr-auth.sh`
   * updates all swarm services `--with-registry-auth` after refreshing ECR auth
