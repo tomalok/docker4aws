@@ -5,7 +5,7 @@ require 'open-uri'
 require 'pp'
 require 'yaml'
 
-VERSION = 'tomalok1'.freeze
+VERSION = 'tomalok2'.freeze
 
 unless ARGV.count == 1
   STDERR.puts "Usage: #{File.basename($0)} <template-uri>"

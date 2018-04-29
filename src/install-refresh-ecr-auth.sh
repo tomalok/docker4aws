@@ -6,10 +6,13 @@ cat >$BINDIR/$SCRIPT <<EOF
 #!/bin/sh -ex
 ECR_LOGIN="\$(docker exec guide-aws aws ecr get-login --no-include-email --region $AWS_REGION)"
 eval \$ECR_LOGIN
-su docker sh -c "eval \$ECR_LOGIN"
-for SERVICE in \$(docker service ls --format "{{.Name}}"); do
-  docker service update -q --with-registry-auth \$SERVICE
-done
+( until [ "\$?" = "0" -o "\$TRIES" = "300" ]; do
+    sleep 1
+    TRIES=\$(( TRIES+1 ))
+    for SERVICE in \$(docker service ls --format "{{.Name}}"); do
+      docker service update -q --with-registry-auth \$SERVICE
+    done
+  done ) &
 EOF
 chmod +x $BINDIR/$SCRIPT
 sed -e "/$SCRIPT/d" /etc/crontabs/root > /tmp/root-crontab
