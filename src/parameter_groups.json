@@ -1,0 +1,10 @@
+{
+  "Swarm Manager Properties": [
+    "ManagerECRPolicyType",
+    "ManagerECRPolicyARNs"
+  ],
+  "Swarm Worker Properties": [
+    "WorkerECRPolicyType",
+    "WorkerECRPolicyARNs"
+  ]
+}

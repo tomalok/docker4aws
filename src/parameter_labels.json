@@ -1,0 +1,17 @@
+{
+  "ManagerECRPolicyType": {
+    "default": "Manager ECR policy type"
+  },
+  "ManagerECRPolicyARNs": {
+    "default": "Manager ECR policy resource ARNs"
+  },
+  "WorkerECRPolicyType": {
+    "default": "Worker ECR policy type"
+  },
+  "WorkerECRPolicyARNs": {
+    "default": "Worker ECR policy resource ARNs"
+  },
+  "ECRAuthLoginTargets": {
+    "default": "ECR auth login targets"
+  }
+}

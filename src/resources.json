@@ -1,0 +1,66 @@
+{
+  "ManagerECRPolicy": {
+    "DependsOn": [
+      "ProxyRole"
+    ],
+    "Properties": {
+      "PolicyDocument": {
+        "Statement": [
+          {
+            "Action": {
+              "Fn::FindInMap": [
+                "ECRPolicyActions",
+                "push-pull",
+                "actions"
+              ]
+            },
+            "Effect": "Allow",
+            "Resource": {
+              "Ref": "ManagerECRPolicyARNs"
+            }
+          }
+        ],
+        "Version": "2012-10-17"
+      },
+      "PolicyName": "manager-ecr-policy",
+      "Roles": [
+        {
+          "Ref": "ProxyRole"
+        }
+      ]
+    },
+    "Type": "AWS::IAM::Policy"
+  },
+  "WorkerECRPolicy": {
+    "DependsOn": [
+      "WorkerRole"
+    ],
+    "Properties": {
+      "PolicyDocument": {
+        "Statement": [
+          {
+            "Action": {
+              "Fn::FindInMap": [
+                "ECRPolicyActions",
+                "pull-only",
+                "actions"
+              ]
+            },
+            "Effect": "Allow",
+            "Resource": {
+              "Ref": "WorkerECRPolicyARNs"
+            }
+          }
+        ],
+        "Version": "2012-10-17"
+      },
+      "PolicyName": "worker-ecr-policy",
+      "Roles": [
+        {
+          "Ref": "WorkerRole"
+        }
+      ]
+    },
+    "Type": "AWS::IAM::Policy"
+  }
+}

@@ -1,0 +1,13 @@
+[
+  "# Sanitize ECR auth targets\n",
+  "export ECR_AUTH_LOGINS=\$(echo '",
+  {
+    "Fn::Join": [
+      ",",
+      {
+        "Ref": "ECRAuthLoginTargets"
+      }
+    ]
+  },
+  "'|tr -d ' ')\n"
+]

@@ -1,0 +1,37 @@
+{
+  "ManagerECRPolicyType": {
+    "AllowedValues": [
+      "pull-only",
+      "push-pull",
+      "unuspecified"
+    ],
+    "Default": "pull-only",
+    "Description": "Choosing 'unspecified' leaves it up to other existing policies.",
+    "Type": "String"
+  },
+  "ManagerECRPolicyARNs": {
+    "Default": "*",
+    "Description": "List of ECR ARNs to which the manager ECR policy type applies.  Format: <ecr-arn>[, ... ]",
+    "Type": "CommaDelimitedList"
+  },
+  "WorkerECRPolicyType": {
+    "AllowedValues": [
+      "pull-only",
+      "push-pull",
+      "unspecified"
+    ],
+    "Default": "pull-only",
+    "Description": "Choosing 'unspecified' leaves it up to other existing policies.",
+    "Type": "String"
+  },
+  "WorkerECRPolicyARNs": {
+    "Default": "*",
+    "Description": "List of ECR ARNs to which the worker ECR policy type applies.  Format: <ecr-arn>[, ... ]",
+    "Type": "CommaDelimitedList"
+  },
+  "ECRAuthLoginTargets": {
+    "Default": "=",
+    "Description": "List of AWS regions and/or account-ids to maintain ECR auth credentials in the swarm.  At minimum, a value of '=' is required to enable this feature, which defaults to current AWS Region and AccountId.  Format: [<region>][=[<acct-id>[:<acct-id> ...]]][, ... ]",
+    "Type": "CommaDelimitedList"
+  }
+}

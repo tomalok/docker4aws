@@ -2,13 +2,12 @@
 
 require 'json'
 require 'open-uri'
-require 'pp'
-require 'yaml'
+
 
 VERSION = 'tomalok2'.freeze
 
 unless ARGV.count == 1
-  STDERR.puts "Usage: #{File.basename($0)} <template-uri>"
+  STDERR.puts "Usage: #{File.basename($0)} { <template-uri> | <template-file> }"
   exit 1
 end
 
@@ -17,37 +16,53 @@ end
 t = JSON.parse(open(ARGV[0]).read)
 
 
-### update description
+### Update Description
 t['Description'].gsub!(/(-aws\d+)/, "\\1-#{VERSION}")
 
 
-# get a hash of all the manager/worker launch config keys, and what we'll change them to
-lc_names = t['Resources'].keys.select{|k| /^(.+)LaunchConfig(.+)$/.match?(k) }.each_with_object({}) {|v,h| h[v] = v + VERSION }
+### Update Mappings
+t['Mappings'].merge!(JSON.parse(File.read('src/mappings.json')))
 
 
-# get ECR policy
-ecr_policy = JSON.parse(File.read('src/ecr-policy.json'))
+### Update Interface
+i = t['Metadata']['AWS::CloudFormation::Interface']
 
-# add ECR policy
-t['Resources'].merge!(ecr_policy)
-
-# get install-refresh-ecr-auth code
-install_refresh_ecr_auth = File.readlines('src/install-refresh-ecr-auth.sh')
-
-# add install-refresh-ecr-auth code to UserDatas...
-lc_names.keys.each do |launch_config|
-  t['Resources'][launch_config]['Properties']['UserData']['Fn::Base64']['Fn::Join'].last.concat(
-    install_refresh_ecr_auth
-  )
+# Update ParameterGroups
+parameter_groups = JSON.parse(File.read('src/parameter_groups.json'))
+i['ParameterGroups'].each do |pg|
+  if parameter_groups.has_key?(pg['Label']['default'])
+    pg['Parameters'].push(*parameter_groups[pg['Label']['default']])
+  end
 end
 
-# change launch config names, and references to them
-lc_names.each do |old,new|
-  asg_name = old.sub(/LaunchConfig.*/, 'Asg')
-  t['Resources'][new] = t['Resources'].delete(old)
-  t['Resources'][asg_name]['Properties']['LaunchConfigurationName']['Ref'] = new
-end
+# Update ParameterLabels
+i['ParameterLabels'].merge!(JSON.parse(File.read('src/parameter_labels.json')))
 
 
-### output the new template
+### Update Parameters
+t['Parameters'].merge!(JSON.parse(File.read('src/parameters.json')))
+
+
+### Update Resources
+
+t['Resources'].merge!(JSON.parse(File.read('src/resources.json')))
+
+# remove old ECRPolicy Resource (apparently it was added to the official template)
+t['Resources'].delete('ECRPolicy')
+
+# discover the manager launch config name (UserData)
+lc_name = t['Resources'].keys.select{|k| /^ManagerLaunchConfig(.+)$/.match?(k) }.first
+
+# Manager UserData array
+mud = t['Resources'][lc_name]['Properties']['UserData']['Fn::Base64']['Fn::Join'].last
+
+# add ECR auth login target export to Manager UserData
+mud.push(*JSON.parse(File.read('src/manager-userdata.json')))
+
+# get/add install-refresh-ecr-auth code
+mud.concat(File.readlines('src/install-refresh-ecr-auth.sh'))
+
+
+### output the tweaked template
+
 puts JSON.pretty_generate(t)
